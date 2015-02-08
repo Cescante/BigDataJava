@@ -38,6 +38,8 @@ public abstract class FileDataParser<E> extends DataParser<String, E>
      */
     public FileDataParser( String filePath, int batchSize, int threadCount )
     {
+        super( batchSize, threadCount );
+        
         try
         {
             String canonicalPath = new File( "." ).getCanonicalPath();
@@ -49,16 +51,6 @@ public abstract class FileDataParser<E> extends DataParser<String, E>
         }
         
         this.filePath = filePath;
-        
-        if( batchSize > 0 )
-        {
-            this.batchSize = batchSize;
-        }
-        
-        if( threadCount > 0 )
-        {
-            this.threadCount = threadCount;
-        }
     }
 
     public abstract void ParseFile( PostProcessor postProcessor )

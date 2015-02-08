@@ -25,6 +25,20 @@ public abstract class DataParser<T, E>
     protected int batchSize = 1000;
     protected int threadCount = 10;
     
+    public DataParser( int batchSize, int threadCount )
+    {
+        
+        if( batchSize > 0 )
+        {
+            this.batchSize = batchSize;
+        }
+        
+        if( threadCount > 0 )
+        {
+            this.threadCount = threadCount;
+        }
+    }
+    
 	public abstract Collection<E> ParseMany( Collection<T> inputs );
 
     /**
@@ -56,13 +70,14 @@ public abstract class DataParser<T, E>
 	        = new ArrayList<ParseBatchRunnable>( actualThreadCount );
 	    
 	    int itemsPerThread = batchSize / actualThreadCount;
+	    itemsPerThread = itemsPerThread * actualThreadCount < batchSize ? itemsPerThread + 1 : itemsPerThread;
 	    
 	    // Partition the lists and feed them to the runnables and then the threads
 	    for( int i = 0; i < actualThreadCount; i++ )
 	    {
 	        int startIdx = i * itemsPerThread;
-	        int endIdx = ( ( i + 1 ) * itemsPerThread - 1 ) > inputs.size()
-	                ? ( ( i + 1 ) * itemsPerThread - 1 ) : inputs.size();
+	        int endIdx = ( ( i + 1 ) * itemsPerThread ) < inputs.size()
+	                ? ( ( i + 1 ) * itemsPerThread ) : inputs.size();
 	        
 	        ParseBatchRunnable runnable
 	            = new ParseBatchRunnable( inputList.subList( startIdx, endIdx ), this );
