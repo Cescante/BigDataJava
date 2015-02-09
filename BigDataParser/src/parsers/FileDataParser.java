@@ -58,5 +58,5 @@ public abstract class FileDataParser<E> extends DataParser<String, E>
 
     public abstract Collection<E> ParseMany( Collection<String> inputs );
 
-    public abstract String SanitizeLine( String line );
+    protected abstract String SanitizeLine( String line );
 }

@@ -53,7 +53,7 @@ public class EndomondoPostProcessor extends PostProcessor
         PostProcessor.OutputToFile( workoutOutPath, workouts );
     }
     
-    public String BuildOutputPath( String outFileName )
+    protected String BuildOutputPath( String outFileName )
     {
         return this.getOutFilePath() + outFileName + Constants.Period 
                 + Utilities.getDateTimeString() 

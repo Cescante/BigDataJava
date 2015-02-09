@@ -47,9 +47,6 @@ public class EndomondoParserTest extends TestCase
     
     public void testParseFile()
     {
-        String absolutePath = String.format( "%s/%s", canonicalPath,
-        		threeInstanceFilePath );
-
         EndomondoDataParser parser = new EndomondoDataParser(
         		threeInstanceFilePath );
         
@@ -138,20 +135,5 @@ public class EndomondoParserTest extends TestCase
         JSONObject jobj = (JSONObject) testObject;
         TestCase.assertEquals( "The sql number should equal.", threeInstanceLabel, jobj
                 .get( EndomondoProperties.workoutID ).toString() );
-        
-//        try
-//        {
-//            PrintWriter testWriter = 
-//                new PrintWriter("/Users/fqiao/Development/Thesis/testParseOuput.txt");
-//            for( String outputJSON : outLines )
-//            {
-//                testWriter.println( outputJSON );
-//            }
-//            testWriter.close();
-//        } catch ( FileNotFoundException e )
-//        {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
     }
 }

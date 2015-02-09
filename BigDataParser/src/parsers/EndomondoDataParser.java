@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.*;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
@@ -75,6 +74,11 @@ public class EndomondoDataParser extends FileDataParser<String>
 
     public static final int workoutRowHTMLDelimitOffset = 3;
 
+    /**
+     * TODO: enable resume?
+     * 
+     * @param filePath
+     */
     public EndomondoDataParser( String filePath )
     {
         super( filePath );
@@ -170,8 +174,19 @@ public class EndomondoDataParser extends FileDataParser<String>
                     int previousRowEndIdx = matcher.start()
                             - workoutRowHTMLDelimitOffset;
 
-                    String parsedJSONString = ParseOne( escaped.substring(
-                            previousRowHTMLIdx, previousRowEndIdx ), jparser );
+                    String parsedJSONString = null;
+                    
+                    try
+                    {
+                        parsedJSONString = ParseOne( escaped.substring(
+                                previousRowHTMLIdx, previousRowEndIdx ), jparser );
+                    } catch ( ParseException e )
+                    {
+                        Utilities.OutputError( e, escaped.substring(
+                                previousRowHTMLIdx, previousRowEndIdx ) );
+                        
+                        System.exit( -1 );
+                    }
 
                     if( parsedJSONString != null )
                     {
@@ -183,11 +198,22 @@ public class EndomondoDataParser extends FileDataParser<String>
             }
 
             // finish up final row
-            String parsedJSONString = ParseOne(
-                    escaped.substring(
-                        previousRowHTMLIdx, 
-                        escaped.length() - workoutRowHTMLTrimOffset ),
-                    jparser );
+            String parsedJSONString = null;
+            try
+            {
+                parsedJSONString = ParseOne(
+                        escaped.substring(
+                            previousRowHTMLIdx, 
+                            escaped.length() - workoutRowHTMLTrimOffset ),
+                        jparser );
+            } catch ( ParseException e )
+            {
+                Utilities.OutputError( e, escaped.substring(
+                        previousRowHTMLIdx,
+                        escaped.length() - workoutRowHTMLTrimOffset ) );
+                
+                System.exit( -1 );
+            }
 
             if( parsedJSONString != null )
             {
@@ -199,7 +225,7 @@ public class EndomondoDataParser extends FileDataParser<String>
     }
 
     @SuppressWarnings( "unchecked" )
-    public String ParseOne( String htmlString, JSONParser jparser )
+    public String ParseOne( String htmlString, JSONParser jparser ) throws ParseException
     {
         JSONObject newObj = new JSONObject();
 
@@ -218,15 +244,7 @@ public class EndomondoDataParser extends FileDataParser<String>
         
         workoutJSON = Utilities.SanitizeJSON( workoutJSON );
         
-        try
-        {
-            workoutObject = (JSONObject) jparser.parse( workoutJSON );
-        } catch ( ParseException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            System.out.println( workoutJSON );
-        }
+        workoutObject = (JSONObject) jparser.parse( workoutJSON );
 
         Long workoutID = (Long) workoutObject.get( JSONlabelid );
 
@@ -311,7 +329,7 @@ public class EndomondoDataParser extends FileDataParser<String>
      * 
      */
     @Override
-    public String SanitizeLine( String line )
+    protected String SanitizeLine( String line )
     {
         if ( line.startsWith( validLinePrefix ) )
         {

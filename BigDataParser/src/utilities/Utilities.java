@@ -1,5 +1,9 @@
 package utilities;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -47,13 +51,41 @@ public class Utilities
         String ret = json;
         while ( ret.contains( "Infinity" ) )
         {
-            ret = ret.replace( "Infinity", "2147483647" );
+            ret = ret.replace( "Infinity", "0" );
         }
         while ( ret.contains( "NaN" ) )
         {
-            ret = ret.replace( "NaN", "2147483647" );
+            ret = ret.replace( "NaN", "0" );
         }
         
         return ret;
+    }
+    
+    public static void OutputError( Exception exp, String error )
+    {
+        String canonicalPath = null;
+        
+        try
+        {
+            canonicalPath = new File( "." ).getCanonicalPath();
+        } catch ( IOException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        String filePath = String.format(
+                "%s%s%s", canonicalPath, File.separator, "errors_" + Utilities.getDateTimeString() );
+
+        try ( PrintWriter pw = new PrintWriter( new FileOutputStream( filePath, false ) ) )
+        {
+            exp.printStackTrace( pw );
+            pw.println( error );
+        }
+        catch ( IOException e )
+        {
+            System.out.format( "Problem writing to path %s", filePath );
+            e.printStackTrace();
+        }
     }
 }

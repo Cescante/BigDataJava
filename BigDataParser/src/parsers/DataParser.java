@@ -47,7 +47,7 @@ public abstract class DataParser<T, E>
      * Divides up the input collection into collection.size / thread count, and
      * calls parseMany on each subcollections, on separate threads.
      * 
-     * TODO: 1). Enable multithreaded parsing. 
+     * 1). Enable multithreaded parsing. Done
      * TODO: 2). Integrate with Hadoop.
      * 
      * @param inputs

@@ -71,12 +71,33 @@ public class PostProcessor
         }
     }
     
-    public void StoreDataToCollection( Collection<String> outputs )
+    public static void OutputToFile( String outPath, Collection<String> outputs )
+    {
+        if ( outputs == null || outputs.isEmpty() )
+        {
+            return;
+        }
+
+        try ( PrintWriter pw = new PrintWriter( new FileOutputStream( outPath, false ) ) )
+        {
+            for( String jsonOut : outputs )
+            {
+                pw.println( jsonOut );
+            }
+        }
+        catch ( IOException e )
+        {
+            System.out.format( "Problem writing to path %s", outPath );
+            e.printStackTrace();
+        }
+    }
+    
+    protected void StoreDataToCollection( Collection<String> outputs )
     {
         outputCollection.addAll( outputs );
     }
     
-    public void WriteDataToFile( Collection<String> outputs )
+    protected void WriteDataToFile( Collection<String> outputs )
     {
         return;
     }
@@ -100,27 +121,6 @@ public class PostProcessor
         else
         {
             throw new NotDirectoryException ( this.outFilePath );
-        }
-    }
-    
-    public static void OutputToFile( String outPath, Collection<String> outputs )
-    {
-        if ( outputs == null || outputs.isEmpty() )
-        {
-            return;
-        }
-
-        try ( PrintWriter pw = new PrintWriter( new FileOutputStream( outPath, false ) ) )
-        {
-            for( String jsonOut : outputs )
-            {
-                pw.println( jsonOut );
-            }
-        }
-        catch ( IOException e )
-        {
-            System.out.format( "Problem writing to path %s", outPath );
-            e.printStackTrace();
         }
     }
 }
