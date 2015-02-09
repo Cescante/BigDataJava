@@ -94,7 +94,7 @@ public class EndomondoDataParser extends FileDataParser<String>
      */
     @Override
     public void ParseFile( PostProcessor postProcessor ) throws IOException
-    {
+    {    	
         try ( BufferedReader br = new BufferedReader( new FileReader( filePath ) ) )
         {
             ArrayList<String> rawLineBatch = new ArrayList<String>( batchSize );
@@ -112,8 +112,7 @@ public class EndomondoDataParser extends FileDataParser<String>
                     // postProcessor.
                     if ( rawLineBatch.size() == batchSize )
                     {
-                        this.ParseBatch( rawLineBatch );
-                        postProcessor.Process( rawLineBatch );
+                        postProcessor.Process( this.ParseBatch( rawLineBatch ) );
                         rawLineBatch = new ArrayList<String>( batchSize );
                     }
                 }
@@ -122,8 +121,7 @@ public class EndomondoDataParser extends FileDataParser<String>
             // Finish off any danglers.
             if ( !rawLineBatch.isEmpty() )
             {
-                this.ParseBatch( rawLineBatch );
-                postProcessor.Process( rawLineBatch );
+                postProcessor.Process( this.ParseBatch( rawLineBatch ) );
             }
         }
         
@@ -131,7 +129,7 @@ public class EndomondoDataParser extends FileDataParser<String>
         
         for ( CopyOnWriteArraySet<Long> userWorkout : userWorkoutMap.values() )
         {
-        	userWorkouts.add( StringUtils.join( ", ", userWorkout ) );
+        	userWorkouts.add( userWorkout.toString() );
         }
         
         ( (EndomondoPostProcessor) postProcessor ).WriteDataToFile( userWorkoutMap.keySet(), userWorkouts, null );

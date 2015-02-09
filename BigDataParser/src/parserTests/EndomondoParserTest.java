@@ -1,21 +1,24 @@
 package parserTests;
 
 import java.io.*;
+import java.nio.file.NotDirectoryException;
 import java.util.*;
 
 import junit.framework.*;
 
+import org.apache.commons.io.*;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
 import bigDataProperties.*;
 import parsers.*;
+import parsers.PostProcessor.PostProcessType;
 
 public class EndomondoParserTest extends TestCase
 {
     private String canonicalPath;
-    private String oneInstanceFilePath = "src/parserTests/EndoMondo3Instances.sql";
-    private String oneInstanceLabel = "327000000";
+    private String threeInstanceFilePath = "src/parserTests/EndoMondo3Instances.sql";
+    private String threeInstanceLabel = "327000000";
 
     private JSONParser jparser = new JSONParser();
 
@@ -41,14 +44,64 @@ public class EndomondoParserTest extends TestCase
     {
         super.tearDown();
     }
+    
+    public void testParseFile()
+    {
+        String absolutePath = String.format( "%s/%s", canonicalPath,
+        		threeInstanceFilePath );
+
+        EndomondoDataParser parser = new EndomondoDataParser(
+        		threeInstanceFilePath );
+        
+        EndomondoPostProcessor postProcessor = null;
+        
+		try
+		{
+			postProcessor = new EndomondoPostProcessor(
+					PostProcessType.WriteToFile, canonicalPath );
+		}
+		catch ( NotDirectoryException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        TestCase.assertNotSame(
+        		"Expect output directory to have been updated", canonicalPath, postProcessor.getOutFilePath() );
+        
+        try
+        {
+			parser.ParseFile( postProcessor );
+		}
+        catch (IOException e)
+        {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        File testOutput = new File( postProcessor.getOutFilePath() );
+        File[] listofFiles = testOutput.listFiles();
+        
+        TestCase.assertEquals("Expect there to be three files.", 3, listofFiles.length );
+        
+        try 
+        {
+			FileUtils.deleteDirectory( testOutput );
+		}
+        catch ( IOException e )
+        {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 
     public void testParseMany()
     {
         String absolutePath = String.format( "%s/%s", canonicalPath,
-                oneInstanceFilePath );
+        		threeInstanceFilePath );
 
-        parsers.EndomondoDataParser parser = new EndomondoDataParser(
-                oneInstanceFilePath );
+        EndomondoDataParser parser = new EndomondoDataParser(
+        		threeInstanceFilePath );
 
         String line = null;
 
@@ -83,7 +136,7 @@ public class EndomondoParserTest extends TestCase
         }
 
         JSONObject jobj = (JSONObject) testObject;
-        TestCase.assertEquals( "The sql number should equal.", oneInstanceLabel, jobj
+        TestCase.assertEquals( "The sql number should equal.", threeInstanceLabel, jobj
                 .get( EndomondoProperties.workoutID ).toString() );
         
 //        try

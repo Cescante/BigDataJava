@@ -69,8 +69,10 @@ public abstract class DataParser<T, E>
 	    ArrayList<ParseBatchRunnable> batchPool
 	        = new ArrayList<ParseBatchRunnable>( actualThreadCount );
 	    
-	    int itemsPerThread = batchSize / actualThreadCount;
-	    itemsPerThread = itemsPerThread * actualThreadCount < batchSize ? itemsPerThread + 1 : itemsPerThread;
+	    int actualBatchSize = batchSize < inputs.size() ? batchSize : inputs.size();
+	    
+	    int itemsPerThread = actualBatchSize / actualThreadCount;
+	    itemsPerThread = itemsPerThread * actualThreadCount < actualBatchSize ? itemsPerThread + 1 : itemsPerThread;
 	    
 	    // Partition the lists and feed them to the runnables and then the threads
 	    for( int i = 0; i < actualThreadCount; i++ )
