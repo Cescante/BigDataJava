@@ -14,8 +14,8 @@ import parsers.*;
 public class EndomondoParserTest extends TestCase
 {
     private String canonicalPath;
-    private String oneInstanceFilePath = "src/parserTests/Edmondo_1_instance.sql";
-    private String oneInstanceLabel = "326940058";
+    private String oneInstanceFilePath = "src/parserTests/EndoMondo3Instances.sql";
+    private String oneInstanceLabel = "327000000";
 
     private JSONParser jparser = new JSONParser();
 
@@ -52,22 +52,24 @@ public class EndomondoParserTest extends TestCase
 
         String line = null;
 
+        ArrayList<String> input = new ArrayList<String>( 3 );
+        
         try ( BufferedReader br = new BufferedReader( new FileReader(
                 absolutePath ) ) )
         {
-            line = br.readLine();
+            while ( ( line = br.readLine() ) != null )
+            {
+                TestCase.assertNotNull( line );
+                input.add( line );
+            }
 
         } catch ( IOException e )
         {
             TestCase.fail( e.getMessage() );
         }
-
-        TestCase.assertNotNull( line );
-        ArrayList<String> input = new ArrayList<String>( 1 );
-        input.add( line );
         
         Collection<String> outLines = parser.ParseMany( input );
-        TestCase.assertEquals( "There should be 8 entries in the workout data.", 8,
+        TestCase.assertEquals( "There should be 26 entries in the workout data.", 26,
                 outLines.size() );
 
         Object testObject = null;

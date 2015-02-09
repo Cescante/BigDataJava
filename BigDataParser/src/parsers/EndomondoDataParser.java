@@ -77,6 +77,7 @@ public class EndomondoDataParser extends FileDataParser<String>
     public EndomondoDataParser( String filePath )
     {
         super( filePath );
+        this.userWorkoutMap = new ConcurrentHashMap<String, CopyOnWriteArraySet<Long>>();
     }
 
     public EndomondoDataParser( String filePath, int batchSize, int threadCount )
@@ -110,7 +111,7 @@ public class EndomondoDataParser extends FileDataParser<String>
                     // postProcessor.
                     if ( rawLineBatch.size() == batchSize )
                     {
-                        this.ParseMany( rawLineBatch );
+                        this.ParseBatch( rawLineBatch );
                         postProcessor.Process( rawLineBatch );
                         rawLineBatch = new ArrayList<String>( batchSize );
                     }
@@ -120,13 +121,17 @@ public class EndomondoDataParser extends FileDataParser<String>
             // Finish off any danglers.
             if ( !rawLineBatch.isEmpty() )
             {
-                this.ParseMany( rawLineBatch );
+                this.ParseBatch( rawLineBatch );
                 postProcessor.Process( rawLineBatch );
             }
         }
         //( (EndomondoPostProcessor) postProcessor ).WriteDataToFile( users, userWorkouts, workouts );
     }
 
+    /**
+     * For each line of Endomondo data, match the JSON text with regex an parse to our
+     * own JSON format.
+     */
     @Override
     public Collection<String> ParseMany( Collection<String> inputs )
     {
@@ -199,6 +204,13 @@ public class EndomondoDataParser extends FileDataParser<String>
         String workoutJSON = matcher.find() ? workoutJSON = matcher.group( 1 )
                 : "";
 
+        if( workoutJSON.equals( "" ) )
+        {
+            return null;
+        }
+        
+        workoutJSON = Utilities.SanitizeJSON( workoutJSON );
+        
         try
         {
             workoutObject = (JSONObject) jparser.parse( workoutJSON );
@@ -206,6 +218,7 @@ public class EndomondoDataParser extends FileDataParser<String>
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            System.out.println( workoutJSON );
         }
 
         Long workoutID = (Long) workoutObject.get( JSONlabelid );
@@ -237,16 +250,22 @@ public class EndomondoDataParser extends FileDataParser<String>
         Elements altitudeitems = summaryUl
                 .getElementsByClass( classNameAltitude );
 
-        String altitude1 = altitudeitems.get( 0 )
-                .getElementsByClass( classNamevalue ).first().html();
-        String altitude2 = altitudeitems.get( 1 )
-                .getElementsByClass( classNamevalue ).first().html();
 
-        String maxAltitude = Integer.parseInt( altitude1.split( "\\s" )[0] ) > Integer
-                .parseInt( altitude2.split( "\\s" )[0] ) ? altitude1
-                : altitude2;
-        String minAltitude = maxAltitude.equals( altitude1 ) ? altitude2
-                : altitude1;
+        String maxAltitude = null;
+        String minAltitude = null;
+        if ( altitudeitems.size() > 0 )
+        {
+            String altitude1 = altitudeitems.get( 0 )
+                    .getElementsByClass( classNamevalue ).first().html();
+            String altitude2 = altitudeitems.get( 1 )
+                    .getElementsByClass( classNamevalue ).first().html();
+    
+            maxAltitude = Integer.parseInt( altitude1.split( "\\s" )[0] ) > Integer
+                    .parseInt( altitude2.split( "\\s" )[0] ) ? altitude1
+                    : altitude2;
+            minAltitude = maxAltitude.equals( altitude1 ) ? altitude2
+                    : altitude1;
+        }
 
         String distance = GetHTMLSummaryItem( summaryUl, classNameDistance );
         String duration = GetHTMLSummaryItem( summaryUl, classNameDuration );

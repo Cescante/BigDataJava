@@ -41,4 +41,19 @@ public class Utilities
             }
         }
     }
+    
+    public static String SanitizeJSON( String json)
+    {
+        String ret = json;
+        while ( ret.contains( "Infinity" ) )
+        {
+            ret = ret.replace( "Infinity", "2147483647" );
+        }
+        while ( ret.contains( "NaN" ) )
+        {
+            ret = ret.replace( "NaN", "2147483647" );
+        }
+        
+        return ret;
+    }
 }
