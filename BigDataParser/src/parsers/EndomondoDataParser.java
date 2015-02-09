@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.*;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
@@ -124,7 +125,15 @@ public class EndomondoDataParser extends FileDataParser<String>
                 postProcessor.Process( rawLineBatch );
             }
         }
-        //( (EndomondoPostProcessor) postProcessor ).WriteDataToFile( users, userWorkouts, workouts );
+        
+        List<String> userWorkouts = new ArrayList<String>( userWorkoutMap.size() );
+        
+        for ( CopyOnWriteArraySet<Long> userWorkout : userWorkoutMap.values() )
+        {
+        	userWorkouts.add( StringUtils.join( ", ", userWorkout ) );
+        }
+        
+        ( (EndomondoPostProcessor) postProcessor ).WriteDataToFile( userWorkoutMap.keySet(), userWorkouts, null );
     }
 
     @Override
