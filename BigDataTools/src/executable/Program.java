@@ -38,6 +38,12 @@ public class Program
         
         String dataType = line.getOptionValue( "t" );
         
+        if (dataType == null)
+        {
+            System.out.println( "No valid data type option, exiting." );
+            System.exit(0);
+        }
+        
         switch( dataType )
         {
         case "EndoMondo":
