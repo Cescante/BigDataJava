@@ -42,8 +42,16 @@ public abstract class FileDataParser<E> extends DataParser<String, E>
         
         try
         {
-            String canonicalPath = new File( "." ).getCanonicalPath();
-            filePath = String.format( "%s%s%s", canonicalPath, File.separator,  filePath );
+            File file = new File( filePath );
+            if ( file.isAbsolute() )
+            {
+                this.filePath = filePath;
+            }
+            else
+            {
+                String canonicalPath = new File( "." ).getCanonicalPath();
+                this.filePath = String.format( "%s%s%s", canonicalPath, File.separator,  filePath );
+            }
         }
         catch ( IOException e1 )
         {

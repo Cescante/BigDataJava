@@ -103,6 +103,8 @@ public class EndomondoDataParser extends FileDataParser<String>
         {
             ArrayList<String> rawLineBatch = new ArrayList<String>( batchSize );
 
+            int lineNumber = 0;
+                    
             // Read lines from file and send them to ParseMany in batches
             for ( String line; (line = br.readLine()) != null; )
             {
@@ -118,14 +120,17 @@ public class EndomondoDataParser extends FileDataParser<String>
                     {
                         postProcessor.Process( this.ParseBatch( rawLineBatch ) );
                         rawLineBatch = new ArrayList<String>( batchSize );
+                        System.out.println( "Current line: " + lineNumber );
                     }
                 }
+                lineNumber++;
             }
 
             // Finish off any danglers.
             if ( !rawLineBatch.isEmpty() )
             {
                 postProcessor.Process( this.ParseBatch( rawLineBatch ) );
+                System.out.println( "Current line: " + lineNumber );
             }
         }
         
