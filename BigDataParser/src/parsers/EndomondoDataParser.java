@@ -27,7 +27,39 @@ public class EndomondoDataParser extends FileDataParser<String>
 {
     private ConcurrentHashMap<String, CopyOnWriteArraySet<Long>> userWorkoutMap;
     
-    private static final String JSONlabelid = "id";
+    /**
+     * Endomondo JSON constants
+     */
+    private static final String JSONlabelId = "id";
+    private static final String JSONlabelStartVertexLat = "startVertexLat";
+    private static final String JSONlabelEndVertexLat = "endVertexLat";
+    private static final String JSONlabelStartVertexLng = "startVertexLng";
+    private static final String JSONlabelEndVertexLng = "endVertexLng";
+    private static final String JSONlabelRecords = "records";
+    private static final String JSONlabelEncoded = "encoded";
+    
+    private static final String JSONlabelLaps = "laps";
+    private static final String JSONlabelLapsAsc = "asc";
+    private static final String JSONlabelLapsDur = "dur";
+    private static final String JSONlabelLapsMaxPace = "maxPace";
+    private static final String JSONlabelLapsDist = "dist";
+    private static final String JSONlabelLapsAvgPace= "avgPace";
+    private static final String JSONlabelLapsEndLat = "end_lat";
+    private static final String JSONlabelLapsEndLng = "end_lng";
+    private static final String JSONlabelLapsMaxAlt = "maxAlt";
+    private static final String JSONlabelLapsMinAlt = "minAlt";
+    private static final String JSONlabelLapsDesc = "desc";
+    private static final String JSONlabelLapsPaths = "paths";
+    
+    private static final String JSONlabelData = "data";
+    private static final String JSONlabelDataLng = "lng";
+    private static final String JSONlabelDataLat = "lat";
+    private static final String JSONlabelDataValues = "values";
+    private static final String JSONlabelDataValuesDuration = "duration";
+    private static final String JSONlabelDataValuesDistance = "distance";
+    private static final String JSONlabelDataValuesPace = "pace";
+    private static final String JSONlabelDataValuesAlt = "alt";
+    
 
     /**
      * Pattern to determine whether the line is a valid SQL insert in to the
@@ -251,7 +283,10 @@ public class EndomondoDataParser extends FileDataParser<String>
         
         workoutObject = (JSONObject) jparser.parse( workoutJSON );
 
-        Long workoutID = (Long) workoutObject.get( JSONlabelid );
+        Long workoutID = (Long) workoutObject.get( JSONlabelId );
+        
+        // TODO: make lists of data and laps.
+        // JSONArray workoutList = (JSONArray) workoutObject.get( key );
 
         // Extract MetaData from HTML------------------------------------------
         Document htmlDOM = Jsoup.parse( htmlString );
