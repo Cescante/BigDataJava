@@ -44,6 +44,8 @@ public class Program
             System.exit(0);
         }
         
+        long startTime = System.nanoTime();
+        
         switch( dataType )
         {
         case "EndoMondo":
@@ -63,5 +65,9 @@ public class Program
         default:
             System.out.println( "No valid data type option, exiting." );
         }
+        
+        long endTime = System.nanoTime();
+        
+        System.out.println( "Time elapsed: " + ( endTime - startTime ) );
     }
 }
