@@ -28,22 +28,23 @@ public final class EndomondoProperties
     public static final String dataPointsPace = "dataPointsPace";
     public static final String dataPointsAlt = "dataPointsAlt";
 
-    private static final String dataStartVertexLat = "dataStartVertexLat";
-    private static final String dataEndVertexLat = "dataEndVertexLat";
-    private static final String dataStartVertexLng = "dataStartVertexLng";
-    private static final String dataEndVertexLng = "dataEndVertexLng";
-    private static final String dataRecords = "dataRecords";
-    private static final String dataEncoded = "dataEncoded";
+    public static final String dataStartVertexLat = "dataStartVertexLat";
+    public static final String dataEndVertexLat = "dataEndVertexLat";
+    public static final String dataStartVertexLng = "dataStartVertexLng";
+    public static final String dataEndVertexLng = "dataEndVertexLng";
+    public static final String dataRecords = "dataRecords";
+    public static final String dataEncoded = "dataEncoded";
 
-    private static final String lapsAsc = "lapsAsc";
-    private static final String lapsDur = "lapsDur";
-    private static final String lapsMaxPace = "lapsMaxPace";
-    private static final String lapsDist = "lapsDist";
-    private static final String lapsAvgPace= "lapsAvgPace";
-    private static final String lapsEndLat = "lapsEnd_lat";
-    private static final String lapsEndLng = "lapsEnd_lng";
-    private static final String lapsMaxAlt = "lapsMaxAlt";
-    private static final String lapsMinAlt = "lapsMinAlt";
-    private static final String lapsDesc = "lapsDesc";
-    private static final String lapsPaths = "lapsPaths";
+    public static final String laps = "laps";
+    public static final String lapsAsc = "lapsAsc";
+    public static final String lapsDur = "lapsDur";
+    public static final String lapsMaxPace = "lapsMaxPace";
+    public static final String lapsDist = "lapsDist";
+    public static final String lapsAvgPace= "lapsAvgPace";
+    public static final String lapsEndLat = "lapsEnd_lat";
+    public static final String lapsEndLng = "lapsEnd_lng";
+    public static final String lapsMaxAlt = "lapsMaxAlt";
+    public static final String lapsMinAlt = "lapsMinAlt";
+    public static final String lapsDesc = "lapsDesc";
+    public static final String lapsPaths = "lapsPaths";
 }

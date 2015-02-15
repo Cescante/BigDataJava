@@ -44,11 +44,13 @@ public class Program
             System.exit(0);
         }
         
+        dataType = dataType.toLowerCase();
+        
         long startTime = System.nanoTime();
         
         switch( dataType )
         {
-        case "EndoMondo":
+        case "endomondo":
             EndomondoDataParser dataParser = new EndomondoDataParser( line.getOptionValue( "f" ) );
             String filePath = dataParser.getFileName();
             File inFile = new File( filePath );
