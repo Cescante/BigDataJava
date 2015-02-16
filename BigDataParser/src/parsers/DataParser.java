@@ -39,7 +39,7 @@ public abstract class DataParser<T, E>
         }
     }
     
-	public abstract Collection<E> ParseMany( Collection<T> inputs );
+	public abstract Collection<E> ParseMany( Collection<T> inputs, String batchIndex );
 
     /**
      * Parse a collection of strings into the output format.
@@ -54,7 +54,7 @@ public abstract class DataParser<T, E>
      *            A collection of data of type <T>.
      * @return A collection of parsed data in of type <E>.
      */
-	public Collection<E> ParseBatch( Collection<T> inputs )
+	public Collection<E> ParseBatch( Collection<T> inputs, String batchIndex )
 	{
 	    List<T> inputList = Utilities.CollectionToList( inputs );
 	    ArrayList<E> outputs = null;
@@ -82,7 +82,7 @@ public abstract class DataParser<T, E>
 	                ? ( ( i + 1 ) * itemsPerThread ) : inputs.size();
 	        
 	        ParseBatchRunnable runnable
-	            = new ParseBatchRunnable( inputList.subList( startIdx, endIdx ), this );
+	            = new ParseBatchRunnable( inputList.subList( startIdx, endIdx ), this, batchIndex );
             batchPool.add( runnable );
 	        
 	        threadPool[i] = new Thread( runnable );
@@ -122,17 +122,20 @@ public abstract class DataParser<T, E>
 	    
 	    private DataParser<T,E> parser;
 	    
+	    private String batchIndex;
+	    
 	    public Collection<E> ParseManyResults;
 	    
-	    public ParseBatchRunnable( Collection<T> inputs,  DataParser<T,E> parser )
+	    public ParseBatchRunnable( Collection<T> inputs,  DataParser<T,E> parser, String batchIndex )
 	    {
 	        this.inputs = inputs;
 	        this.parser = parser;
+	        this.batchIndex = batchIndex;
 	    }
 	    
 	    public void run()
 	    {
-	        ParseManyResults = parser.ParseMany( inputs );
+	        ParseManyResults = parser.ParseMany( inputs, batchIndex );
 	    }
 	}
 }

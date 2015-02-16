@@ -9,9 +9,7 @@ import org.jsoup.*;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-// import org.jsoup.*;
 import org.jsoup.nodes.*;
-// import org.jsoup.parser.*;
 import org.jsoup.select.*;
 
 import utilities.*;
@@ -150,7 +148,7 @@ public class EndomondoDataParser extends FileDataParser<String>
                     // postProcessor.
                     if ( rawLineBatch.size() == batchSize )
                     {
-                        postProcessor.Process( this.ParseBatch( rawLineBatch ) );
+                        postProcessor.Process( this.ParseBatch( rawLineBatch, null ), null );
                         rawLineBatch = new ArrayList<String>( batchSize );
                         System.out.println( "Current line: " + lineNumber );
                     }
@@ -161,7 +159,7 @@ public class EndomondoDataParser extends FileDataParser<String>
             // Finish off any danglers.
             if ( !rawLineBatch.isEmpty() )
             {
-                postProcessor.Process( this.ParseBatch( rawLineBatch ) );
+                postProcessor.Process( this.ParseBatch( rawLineBatch, null ), null );
                 System.out.println( "Current line: " + lineNumber );
             }
         }
@@ -181,7 +179,7 @@ public class EndomondoDataParser extends FileDataParser<String>
      * own JSON format.
      */
     @Override
-    public Collection<String> ParseMany( Collection<String> inputs )
+    public Collection<String> ParseMany( Collection<String> inputs, String batchIndex )
     {
         List<String> outputs = new ArrayList<String>( inputs.size() );
 

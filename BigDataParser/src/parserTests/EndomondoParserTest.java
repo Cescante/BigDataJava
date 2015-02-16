@@ -118,7 +118,7 @@ public class EndomondoParserTest extends TestCase
             TestCase.fail( e.getMessage() );
         }
         
-        Collection<String> outLines = parser.ParseMany( input );
+        Collection<String> outLines = parser.ParseMany( input, null );
         TestCase.assertEquals( "There should be 26 entries in the workout data.", 26,
                 outLines.size() );
 

@@ -22,7 +22,7 @@ public class DataParserTest extends TestCase
         
         TestDataParser testParser = new TestDataParser( 200, 6 );
         
-        Collection<String> outputs = testParser.ParseBatch( testStrings );
+        Collection<String> outputs = testParser.ParseBatch( testStrings, null );
         
         TestCase.assertEquals( "All items should be parsed", testSize, outputs.size() );
         

@@ -8,11 +8,11 @@ import utilities.*;
 
 public class EndomondoPostProcessor extends PostProcessor
 {
-    private static String outFileExtension = ".json";
-    private static String usersFileName = "users";
-    private static String userWorkoutsFileName = "user.workouts";
-    private static String workoutsFileName = "workouts";
-    private static String directoryName = "EndomondoData.";
+    protected static String outFileExtension = ".json";
+    protected static String usersFileName = "users";
+    protected static String userWorkoutsFileName = "user.workouts";
+    protected static String workoutsFileName = "workouts";
+    protected static String directoryName = "EndomondoData.";
     
     public EndomondoPostProcessor( PostProcessType type, String outFilePath ) 
             throws NotDirectoryException
@@ -27,7 +27,7 @@ public class EndomondoPostProcessor extends PostProcessor
      * @param outputs
      */
     @Override
-    public void WriteDataToFile( Collection<String> outputs )
+    public void WriteDataToFile( Collection<String> outputs, String customFileIndex )
     {
         this.WriteDataToFile( null, null, outputs );
     }

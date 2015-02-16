@@ -21,7 +21,7 @@ public class TestDataParser extends DataParser<String, String>
     public static final String parsedFlag = "__Parsed__";
     
     @Override
-    public Collection<String> ParseMany( Collection<String> inputs )
+    public Collection<String> ParseMany( Collection<String> inputs, String batchIndex )
     {
         List<String> outputs = new ArrayList<String>( inputs.size() );
         

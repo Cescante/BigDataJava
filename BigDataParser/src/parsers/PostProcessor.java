@@ -57,7 +57,7 @@ public class PostProcessor
         this( type, "." );
     }
     
-    public void Process( Collection<String> outputs )
+    public void Process( Collection<String> outputs, String customFileIndex )
     {
         
         switch (this.thisType)
@@ -65,7 +65,7 @@ public class PostProcessor
         case StoreToCollection:
             this.StoreDataToCollection( outputs );
         case WriteToFile:
-            this.WriteDataToFile( outputs );
+            this.WriteDataToFile( outputs, customFileIndex );
         default:
             break;
         }
@@ -97,7 +97,7 @@ public class PostProcessor
         outputCollection.addAll( outputs );
     }
     
-    protected void WriteDataToFile( Collection<String> outputs )
+    protected void WriteDataToFile( Collection<String> outputs, String customFileIndex )
     {
         return;
     }

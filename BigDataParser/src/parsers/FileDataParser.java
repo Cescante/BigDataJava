@@ -64,7 +64,7 @@ public abstract class FileDataParser<E> extends DataParser<String, E>
     public abstract void ParseFile( PostProcessor postProcessor )
             throws IOException;
 
-    public abstract Collection<E> ParseMany( Collection<String> inputs );
+    public abstract Collection<E> ParseMany( Collection<String> inputs, String batchIndex );
 
     protected abstract String SanitizeLine( String line );
 }
