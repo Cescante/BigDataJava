@@ -10,6 +10,35 @@ import parsers.PostProcessor.PostProcessType;
 
 public class Program
 {
+    private static void ParseEndomondo( String inpath )
+    {
+        EndomondoDataParser dataParser = new EndomondoDataParser( inpath );
+        File inFile = new File( dataParser.getFileName() );
+        try
+        {
+            dataParser.ParseFile( new EndomondoPostProcessor( PostProcessType.WriteToFile, inFile.getParent() ) );
+        }
+        catch ( IOException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    private static void ParseEndomondoParsed( String inpath )
+    {
+        EndomondoParsedDataParser dataParser = new EndomondoParsedDataParser( inpath );
+        File inFile = new File( dataParser.getFileName() );
+        try
+        {
+            dataParser.ParseFile( new EndomondoParsedPostProcessor( PostProcessType.WriteToFile, inFile.getParent() ) );
+        }
+        catch ( IOException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     public static void main( String[] args )
     {
@@ -51,18 +80,10 @@ public class Program
         switch( dataType )
         {
         case "endomondo":
-            EndomondoDataParser dataParser = new EndomondoDataParser( line.getOptionValue( "f" ) );
-            String filePath = dataParser.getFileName();
-            File inFile = new File( filePath );
-            try
-            {
-                dataParser.ParseFile( new EndomondoPostProcessor( PostProcessType.WriteToFile, inFile.getParent() ) );
-            }
-            catch ( IOException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            ParseEndomondo( line.getOptionValue( "f" ) );
+            break;
+        case "endomondoparsed":
+            ParseEndomondoParsed( line.getOptionValue( "f" ) );
             break;
         default:
             System.out.println( "No valid data type option, exiting." );

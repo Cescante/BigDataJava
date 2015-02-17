@@ -5,20 +5,31 @@ public final class EndomondoProperties
     /**
      * Custom JSON property names.
      */
-    public static final String workoutID = "sqlLable";
-    public static final String userID = "userID";
+    public static final String workoutID = "workout_id";
+    public static final String userID = "user_id";
     public static final String workoutData = "workoutData";
-    public static final String workoutSportName = "workoutSportName";
+    public static final String workoutSportName = "sport";
     public static final String workoutDate = "workoutDate";
-    public static final String workoutDistance = "workoutDistance";
-    public static final String workoutDuration = "workoutDuration";
-    public static final String workoutAverageSpeed = "workoutAverageSpeed";
-    public static final String workoutMaxSpeed = "workoutMaxSpeed";
-    public static final String workoutCalories = "workoutCalories";
-    public static final String workoutMinAltitude  = "workoutMinAltitude";
+    public static final String workoutDistance = "Distance";
+    public static final String workoutDuration = "Duration";
+    public static final String workoutAverageSpeed = "Avg. Speed";
+    public static final String workoutDateTime = "date-time";
+    public static final String workoutMaxSpeed = "Max. Speed";
+    public static final String workoutCalories = "Calories";
+    public static final String workoutMinAltitude  = "Min. Altitude";
     public static final String workoutMaxAltitude = "workoutMaxAltitude";
-    public static final String workoutTotalAscent = "workoutTotalAscent";
-    public static final String workoutTotalDescent = "workoutTotalDescent";
+    public static final String workoutTotalAscent = "Total Ascent";
+    public static final String workoutTotalDescent = "Total Descent";
+    public static final String workoutFitnessScore = "Fitness Score";
+    public static final String workoutFitnessLevel = "Fitness Level";
+    public static final String workoutWeather = "Weather";
+    public static final String workoutTemperature = "Temperature";
+    public static final String workoutHydration = "Hydration";
+    public static final String workoutLngList = "lng";
+    public static final String workoutLatList = "lat";
+    public static final String workoutDistanceList = "distance";
+    public static final String workoutDurationList = "duration";
+    public static final String workoutPaceList = "pace";
     
     public static final String dataPoints = "dataPoints";
     public static final String dataPointsLng = "dataPointsLng";

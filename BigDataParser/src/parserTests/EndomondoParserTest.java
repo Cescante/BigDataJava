@@ -18,6 +18,7 @@ public class EndomondoParserTest extends TestCase
 {
     private String canonicalPath;
     private String threeInstanceFilePath = "src/parserTests/EndoMondo3Instances.sql";
+    private String parsedFilePath = "src/parserTests/EdmondoParsedData.json";
     private String threeInstanceLabel = "327000000";
 
     private JSONParser jparser = new JSONParser();
@@ -135,5 +136,42 @@ public class EndomondoParserTest extends TestCase
         JSONObject jobj = (JSONObject) testObject;
         TestCase.assertEquals( "The sql number should equal.", threeInstanceLabel, jobj
                 .get( EndomondoProperties.workoutID ).toString() );
+    }
+    
+    public void testParsedParseFile()
+    {
+        EndomondoParsedDataParser parser = new EndomondoParsedDataParser(
+                parsedFilePath );
+        
+        EndomondoParsedPostProcessor postProcessor = null;
+        
+        try
+        {
+            postProcessor = new EndomondoParsedPostProcessor(
+                    PostProcessType.WriteToFile, canonicalPath );
+        }
+        catch ( NotDirectoryException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        TestCase.assertNotSame(
+                "Expect output directory to have been updated", canonicalPath, postProcessor.getOutFilePath() );
+        
+        try
+        {
+            parser.ParseFile( postProcessor );
+        }
+        catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        File testOutput = new File( postProcessor.getOutFilePath() );
+        File[] listofFiles = testOutput.listFiles();
+        
+        TestCase.assertEquals("Expect there to be three files.", 5, listofFiles.length );
     }
 }

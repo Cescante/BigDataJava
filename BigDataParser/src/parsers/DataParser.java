@@ -61,18 +61,18 @@ public abstract class DataParser<T, E>
 	    
 	    int actualThreadCount = inputs.size() < threadCount ? inputs.size() : threadCount;
 	    
-	    // Create a list of threads.
-	    // Also a collection keeping track of the runnables because dumbass Java doesn't
-	    // have a straight forward way to manage thread callbacks or returns for
-	    // the simplest scenarios.
-	    Thread[] threadPool = new Thread[actualThreadCount];
-	    ArrayList<ParseBatchRunnable> batchPool
-	        = new ArrayList<ParseBatchRunnable>( actualThreadCount );
-	    
 	    int actualBatchSize = batchSize < inputs.size() ? batchSize : inputs.size();
 	    
 	    int itemsPerThread = actualBatchSize / actualThreadCount;
-	    itemsPerThread = itemsPerThread * actualThreadCount < actualBatchSize ? itemsPerThread + 1 : itemsPerThread;
+	    actualThreadCount = itemsPerThread * actualThreadCount < actualBatchSize ? actualThreadCount + 1 : actualThreadCount;
+        
+        // Create a list of threads.
+        // Also a collection keeping track of the runnables because dumbass Java doesn't
+        // have a straight forward way to manage thread callbacks or returns for
+        // the simplest scenarios.
+        Thread[] threadPool = new Thread[actualThreadCount];
+        ArrayList<ParseBatchRunnable> batchPool
+            = new ArrayList<ParseBatchRunnable>( actualThreadCount );
 	    
 	    // Partition the lists and feed them to the runnables and then the threads
 	    for( int i = 0; i < actualThreadCount; i++ )

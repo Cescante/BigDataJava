@@ -14,9 +14,7 @@ import org.json.simple.parser.ParseException;
 import utilities.JSONUtilities;
 import utilities.Utilities;
 
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
-import com.sun.javafx.collections.MappingChange.Map;
-
+import bigDataProperties.*;
 
 /**
  * @author fqiao
@@ -27,8 +25,9 @@ import com.sun.javafx.collections.MappingChange.Map;
 public class EndomondoParsedDataParser extends FileDataParser<String>
 {
     protected int batchSize = 2500;
-    private ConcurrentHashMap<String, CopyOnWriteArraySet<Long>> userWorkoutMap;
+    private ConcurrentHashMap<String, CopyOnWriteArraySet<String>> userWorkoutMap;
     private ConcurrentHashMap<String, String> workoutIndexMap;
+    private ConcurrentHashMap<String, Boolean> dataKeysMap;
 
     /**
      * TODO: enable resume?
@@ -38,15 +37,17 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
     public EndomondoParsedDataParser( String filePath )
     {
         super( filePath );
-        this.userWorkoutMap = new ConcurrentHashMap<String, CopyOnWriteArraySet<Long>>();
+        this.userWorkoutMap = new ConcurrentHashMap<String, CopyOnWriteArraySet<String>>();
         this.workoutIndexMap = new ConcurrentHashMap<String, String>();
+        this.dataKeysMap = new ConcurrentHashMap<String, Boolean>();
     }
 
     public EndomondoParsedDataParser( String filePath, int batchSize, int threadCount )
     {
         super( filePath, batchSize, threadCount );
-        this.userWorkoutMap = new ConcurrentHashMap<String, CopyOnWriteArraySet<Long>>();
+        this.userWorkoutMap = new ConcurrentHashMap<String, CopyOnWriteArraySet<String>>();
         this.workoutIndexMap = new ConcurrentHashMap<String, String>();
+        this.dataKeysMap = new ConcurrentHashMap<String, Boolean>();
     }
 
 
@@ -68,20 +69,25 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
             // Read lines from file and send them to ParseMany in batches
             for ( String line; (line = br.readLine()) != null; )
             {
-                rawLineBatch.add( line );
+                String sanitizedLine = SanitizeLine( line );
 
-                // Parse a batch of lines and send them to the
-                // postProcessor.
-                if ( rawLineBatch.size() == batchSize )
+                if ( sanitizedLine != null )
                 {
-                    postProcessor.Process( this.ParseBatch( rawLineBatch, String.format( "%05d", batchIndex ) ), null );
-                    rawLineBatch = new ArrayList<String>( batchSize );
-                    batchIndex++;
+                    rawLineBatch.add( line );
+    
+                    // Parse a batch of lines and send them to the
+                    // postProcessor.
+                    if ( rawLineBatch.size() == batchSize )
+                    {
+                        postProcessor.Process( this.ParseBatch( rawLineBatch, String.format( "%05d", batchIndex ) ), null );
+                        rawLineBatch = new ArrayList<String>( batchSize );
+                        batchIndex++;
+                        
+                        System.out.println( "Current line: " + lineNumber +", batch number: " + batchIndex );
+                    }
                     
-                    System.out.println( "Current line: " + lineNumber +", batch number: " + batchIndex );
+                    lineNumber++;
                 }
-                
-                lineNumber++;
             }
 
             // Finish off any danglers.
@@ -94,23 +100,33 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
         
         List<String> userWorkouts = new ArrayList<String>( userWorkoutMap.size() );
         List<String> workoutIndices = new ArrayList<String>( workoutIndexMap.size() );
+        List<String> dataKeys = new ArrayList<String>( dataKeysMap.size() );
         
-        for ( CopyOnWriteArraySet<Long> userWorkout : userWorkoutMap.values() )
+        for ( CopyOnWriteArraySet<String> userWorkout : userWorkoutMap.values() )
         {
             userWorkouts.add( userWorkout.toString() );
         }
         
         for ( java.util.Map.Entry<String, String> workoutIndex : workoutIndexMap.entrySet() )
         {
-            workoutIndices.add( String.format( "{\"%s\":\"%s\"", workoutIndex.getKey(), workoutIndex.getValue() ) );
+            workoutIndices.add( String.format( "%s:%s", workoutIndex.getKey(), workoutIndex.getValue() ) );
         }
         
-        ( (EndomondoParsedPostProcessor) postProcessor ).WriteDataToFile( userWorkoutMap.keySet(), userWorkouts, workoutIndices, null );
+        Enumeration<String> allKeys = dataKeysMap.keys();
+        
+        while ( allKeys.hasMoreElements() )
+        {
+            dataKeys.add( allKeys.nextElement() );
+        }
+        
+        ( (EndomondoParsedPostProcessor) postProcessor ).WriteDataToFile( userWorkoutMap.keySet(), userWorkouts, workoutIndices, dataKeys, null );
     }
 
     @Override
     public Collection<String> ParseMany( Collection<String> inputs, String batchIndex )
     {
+        List<String> outputs = new ArrayList<String>( inputs.size() );
+        
         // DO NOT MAKE THIS GLOBAL. Not thread safe, must be local to ParseMany.
         JSONParser jparser = new JSONParser();
         
@@ -128,16 +144,35 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
                 
                 System.exit( -1 );
             }
+
+            String userId = (String)workoutObject.get( EndomondoProperties.userID );
+            String workoutID = (String)workoutObject.get( EndomondoProperties.workoutID );
             
-            // TODO: get user id and workout id, add them to maps
+            for ( Object key : workoutObject.keySet() )
+            {
+                this.dataKeysMap.putIfAbsent( (String)key, Boolean.TRUE );
+            }
+
+            // Don't do anything anymore if workoutID already processed.
+            this.userWorkoutMap.putIfAbsent( userId, new CopyOnWriteArraySet<String>() );
+            if( !this.userWorkoutMap.get( userId ).add( workoutID ) )
+            {
+                continue;
+            }
+            
+            this.workoutIndexMap.putIfAbsent( workoutID, batchIndex );
+            outputs.add( workoutJSON );
         }
-        return null;
+        return outputs;
     }
 
     @Override
     protected String SanitizeLine( String line )
     {
-        // TODO Auto-generated method stub
-        return null;
+        if ( line == null || line.length() == 0 )
+        {
+            return null;
+        }
+        return line;
     }
 }

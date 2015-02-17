@@ -9,6 +9,7 @@ public class EndomondoParsedPostProcessor extends EndomondoPostProcessor
 {
 
     protected static String workoutsIndexFileName = "workouts.index";
+    protected static String dataKeysFileName = "data.keys";
 
     public EndomondoParsedPostProcessor( PostProcessType type,
             String outFilePath ) throws NotDirectoryException
@@ -44,12 +45,16 @@ public class EndomondoParsedPostProcessor extends EndomondoPostProcessor
             Collection<String> users, 
             Collection<String> userWorkouts, 
             Collection<String> workOutFileIndex, 
+            Collection<String> dataKeys,
             Collection<String> workouts )
     {
         super.WriteDataToFile( users, userWorkouts, workouts );
 
         String workoutIndexOutPath = this.BuildOutputPath( workoutsIndexFileName );
-        PostProcessor.OutputToFile( workoutIndexOutPath, workouts );
+        String dataKeysOutPath = this.BuildOutputPath( dataKeysFileName );
+
+        PostProcessor.OutputToFile( workoutIndexOutPath, workOutFileIndex );
+        PostProcessor.OutputToFile( dataKeysOutPath, dataKeys );
     }
     
     @Override
