@@ -56,7 +56,7 @@ public class EndomondoParserTest extends TestCase
 		try
 		{
 			postProcessor = new EndomondoPostProcessor(
-					PostProcessType.WriteToFile, canonicalPath );
+					PostProcessType.WriteToFile, canonicalPath, true );
 		}
 		catch ( NotDirectoryException e )
 		{
@@ -148,7 +148,7 @@ public class EndomondoParserTest extends TestCase
         try
         {
             postProcessor = new EndomondoParsedPostProcessor(
-                    PostProcessType.WriteToFile, canonicalPath );
+                    PostProcessType.WriteToFile, canonicalPath, true );
         }
         catch ( NotDirectoryException e )
         {

@@ -14,10 +14,10 @@ public class EndomondoPostProcessor extends PostProcessor
     protected static String workoutsFileName = "workouts";
     protected static String directoryName = "EndomondoData.";
     
-    public EndomondoPostProcessor( PostProcessType type, String outFilePath ) 
+    public EndomondoPostProcessor( PostProcessType type, String outFilePath, Boolean batchedOutput ) 
             throws NotDirectoryException
     {
-        super( type, outFilePath );
+        super( type, outFilePath, batchedOutput );
     }
     
     /**
@@ -48,9 +48,9 @@ public class EndomondoPostProcessor extends PostProcessor
         String userWorkoutOutPath = this.BuildOutputPath( userWorkoutsFileName );
         String workoutOutPath = this.BuildOutputPath( workoutsFileName );
         
-        PostProcessor.OutputToFile( userOutPath, users );
-        PostProcessor.OutputToFile( userWorkoutOutPath, userWorkouts );
-        PostProcessor.OutputToFile( workoutOutPath, workouts );
+        this.OutputToFile( userOutPath, users );
+        this.OutputToFile( userWorkoutOutPath, userWorkouts );
+        this.OutputToFile( workoutOutPath, workouts );
     }
     
     protected String BuildOutputPath( String outFileName )

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -13,7 +14,6 @@ import org.json.simple.parser.ParseException;
 
 import utilities.JSONUtilities;
 import utilities.Utilities;
-
 import bigDataProperties.*;
 
 /**
@@ -27,7 +27,7 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
     protected int batchSize = 2500;
     private ConcurrentHashMap<String, CopyOnWriteArraySet<String>> userWorkoutMap;
     private ConcurrentHashMap<String, String> workoutIndexMap;
-    private ConcurrentHashMap<String, Boolean> dataKeysMap;
+    private ConcurrentHashMap<String, AtomicInteger> dataKeysMap;
 
     /**
      * TODO: enable resume?
@@ -39,7 +39,7 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
         super( filePath );
         this.userWorkoutMap = new ConcurrentHashMap<String, CopyOnWriteArraySet<String>>();
         this.workoutIndexMap = new ConcurrentHashMap<String, String>();
-        this.dataKeysMap = new ConcurrentHashMap<String, Boolean>();
+        this.dataKeysMap = new ConcurrentHashMap<String, AtomicInteger>();
     }
 
     public EndomondoParsedDataParser( String filePath, int batchSize, int threadCount )
@@ -47,7 +47,7 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
         super( filePath, batchSize, threadCount );
         this.userWorkoutMap = new ConcurrentHashMap<String, CopyOnWriteArraySet<String>>();
         this.workoutIndexMap = new ConcurrentHashMap<String, String>();
-        this.dataKeysMap = new ConcurrentHashMap<String, Boolean>();
+        this.dataKeysMap = new ConcurrentHashMap<String, AtomicInteger>();
     }
 
 
@@ -79,7 +79,11 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
                     // postProcessor.
                     if ( rawLineBatch.size() == batchSize )
                     {
-                        postProcessor.Process( this.ParseBatch( rawLineBatch, String.format( "%05d", batchIndex ) ), null );
+                        Collection<String> batchResult = this.ParseBatch( rawLineBatch,  String.format( "%05d", batchIndex ) );
+                        if( postProcessor.batchedOutput )
+                        {
+                        	postProcessor.Process( batchResult, null );
+                        }
                         rawLineBatch = new ArrayList<String>( batchSize );
                         batchIndex++;
                         
@@ -93,7 +97,11 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
             // Finish off any danglers.
             if ( !rawLineBatch.isEmpty() )
             {
-                postProcessor.Process( this.ParseBatch( rawLineBatch,  String.format( "%05d", batchIndex ) ), null );
+                Collection<String> batchResult = this.ParseBatch( rawLineBatch,  String.format( "%05d", batchIndex ) );
+                if( postProcessor.batchedOutput )
+                {
+                	postProcessor.Process( batchResult, null );
+                }
                 System.out.println( "Current line: " + lineNumber );
             }
         }
@@ -112,11 +120,9 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
             workoutIndices.add( String.format( "%s:%s", workoutIndex.getKey(), workoutIndex.getValue() ) );
         }
         
-        Enumeration<String> allKeys = dataKeysMap.keys();
-        
-        while ( allKeys.hasMoreElements() )
+        for ( java.util.Map.Entry<String, AtomicInteger> workoutKey : dataKeysMap.entrySet() )
         {
-            dataKeys.add( allKeys.nextElement() );
+            dataKeys.add( String.format( "%s:%s", workoutKey.getKey(), workoutKey.getValue().intValue() ) );
         }
         
         ( (EndomondoParsedPostProcessor) postProcessor ).WriteDataToFile( userWorkoutMap.keySet(), userWorkouts, workoutIndices, dataKeys, null );
@@ -150,7 +156,8 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
             
             for ( Object key : workoutObject.keySet() )
             {
-                this.dataKeysMap.putIfAbsent( (String)key, Boolean.TRUE );
+                this.dataKeysMap.putIfAbsent( (String)key, new AtomicInteger( 0 ) );
+                this.dataKeysMap.get( (String)key ).addAndGet( 1 );
             }
 
             // Don't do anything anymore if workoutID already processed.

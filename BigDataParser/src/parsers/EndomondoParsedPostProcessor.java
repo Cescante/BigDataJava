@@ -12,9 +12,9 @@ public class EndomondoParsedPostProcessor extends EndomondoPostProcessor
     protected static String dataKeysFileName = "data.keys";
 
     public EndomondoParsedPostProcessor( PostProcessType type,
-            String outFilePath ) throws NotDirectoryException
+            String outFilePath, Boolean batchedOutput) throws NotDirectoryException
     {
-        super( type, outFilePath );
+        super( type, outFilePath, batchedOutput );
     }
 
     /**
@@ -25,11 +25,11 @@ public class EndomondoParsedPostProcessor extends EndomondoPostProcessor
     @Override
     public void WriteDataToFile( Collection<String> workouts, String fileIndex )
     {
-        String workoutOutPath = this.getOutFilePath() + workoutsFileName + Constants.Period 
-            + fileIndex
+    	String suffix = this.batchedOutput ? Constants.Period  + fileIndex : "";
+        String workoutOutPath = this.getOutFilePath() + workoutsFileName + suffix
             + EndomondoPostProcessor.outFileExtension;
         
-        PostProcessor.OutputToFile( workoutOutPath, workouts );
+        this.OutputToFile( workoutOutPath, workouts );
     }
     
 
@@ -53,8 +53,8 @@ public class EndomondoParsedPostProcessor extends EndomondoPostProcessor
         String workoutIndexOutPath = this.BuildOutputPath( workoutsIndexFileName );
         String dataKeysOutPath = this.BuildOutputPath( dataKeysFileName );
 
-        PostProcessor.OutputToFile( workoutIndexOutPath, workOutFileIndex );
-        PostProcessor.OutputToFile( dataKeysOutPath, dataKeys );
+        this.OutputToFile( workoutIndexOutPath, workOutFileIndex );
+        this.OutputToFile( dataKeysOutPath, dataKeys );
     }
     
     @Override

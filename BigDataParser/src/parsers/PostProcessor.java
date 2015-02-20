@@ -34,11 +34,16 @@ public class PostProcessor
     protected String outFilePath;
     
     public String getOutFilePath() { return outFilePath; }
+    
+    protected Boolean batchedOutput;
 
-    public PostProcessor( PostProcessType type, String outFilePath ) throws NotDirectoryException
+    public Boolean getbatchedOutput() { return batchedOutput; }
+
+    public PostProcessor( PostProcessType type, String outFilePath, Boolean batchedOutput ) throws NotDirectoryException
     {
         this.thisType = type;
         this.outFilePath = outFilePath;
+        this.batchedOutput = batchedOutput;
         
         switch ( this.thisType )
         {
@@ -54,7 +59,7 @@ public class PostProcessor
     
     public PostProcessor( PostProcessType type ) throws NotDirectoryException
     {
-        this( type, "." );
+        this( type, ".", true );
     }
     
     public void Process( Collection<String> outputs, String customFileIndex )
@@ -71,14 +76,14 @@ public class PostProcessor
         }
     }
     
-    public static void OutputToFile( String outPath, Collection<String> outputs )
+    public void OutputToFile( String outPath, Collection<String> outputs )
     {
         if ( outputs == null || outputs.isEmpty() )
         {
             return;
         }
 
-        try ( PrintWriter pw = new PrintWriter( new FileOutputStream( outPath, false ) ) )
+        try ( PrintWriter pw = new PrintWriter( new FileOutputStream( outPath, !this.batchedOutput ) ) )
         {
             for( String jsonOut : outputs )
             {

@@ -10,13 +10,13 @@ import parsers.PostProcessor.PostProcessType;
 
 public class Program
 {
-    private static void ParseEndomondo( String inpath )
+    private static void ParseEndomondo( String inpath, Boolean batchedOutput )
     {
         EndomondoDataParser dataParser = new EndomondoDataParser( inpath );
         File inFile = new File( dataParser.getFileName() );
         try
         {
-            dataParser.ParseFile( new EndomondoPostProcessor( PostProcessType.WriteToFile, inFile.getParent() ) );
+            dataParser.ParseFile( new EndomondoPostProcessor( PostProcessType.WriteToFile, inFile.getAbsoluteFile().getParentFile().getAbsolutePath(), batchedOutput ) );
         }
         catch ( IOException e )
         {
@@ -25,13 +25,13 @@ public class Program
         }
     }
 
-    private static void ParseEndomondoParsed( String inpath )
+    private static void ParseEndomondoParsed( String inpath, Boolean batchedOutput  )
     {
         EndomondoParsedDataParser dataParser = new EndomondoParsedDataParser( inpath );
         File inFile = new File( dataParser.getFileName() );
         try
         {
-            dataParser.ParseFile( new EndomondoParsedPostProcessor( PostProcessType.WriteToFile, inFile.getParent() ) );
+            dataParser.ParseFile( new EndomondoParsedPostProcessor( PostProcessType.WriteToFile, inFile.getAbsoluteFile().getParentFile().getAbsolutePath(), batchedOutput ) );
         }
         catch ( IOException e )
         {
@@ -47,6 +47,7 @@ public class Program
         options.addOption( "t", "datatype", true, "Type of data to parse:"
                 + "\"EndoMondo\" - endomondo dataset." );
         options.addOption( "f", "inputfile", true, "The input file path" );
+        options.addOption( "b", "batchOutput", false, "Output results in files of batch size entries." );
         
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "BigDataTools", options );
@@ -66,6 +67,7 @@ public class Program
         }
         
         String dataType = line.getOptionValue( "t" );
+        Boolean batchedOutput = line.hasOption("b");
         
         if (dataType == null)
         {
@@ -80,10 +82,10 @@ public class Program
         switch( dataType )
         {
         case "endomondo":
-            ParseEndomondo( line.getOptionValue( "f" ) );
+            ParseEndomondo( line.getOptionValue( "f" ), batchedOutput );
             break;
         case "endomondoparsed":
-            ParseEndomondoParsed( line.getOptionValue( "f" ) );
+            ParseEndomondoParsed( line.getOptionValue( "f" ), batchedOutput );
             break;
         default:
             System.out.println( "No valid data type option, exiting." );
