@@ -12,7 +12,7 @@ public class Program
 {
     private static void ParseEndomondo( String inpath, Boolean batchedOutput )
     {
-        EndomondoDataParser dataParser = new EndomondoDataParser( inpath );
+        EndomondoDataParser dataParser = new EndomondoDataParser( inpath, 3000, 10 );
         File inFile = new File( dataParser.getFileName() );
         try
         {
@@ -27,7 +27,7 @@ public class Program
 
     private static void ParseEndomondoParsed( String inpath, Boolean batchedOutput  )
     {
-        EndomondoParsedDataParser dataParser = new EndomondoParsedDataParser( inpath );
+        EndomondoParsedDataParser dataParser = new EndomondoParsedDataParser( inpath, 3000, 10 );
         File inFile = new File( dataParser.getFileName() );
         try
         {

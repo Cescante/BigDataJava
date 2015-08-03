@@ -64,8 +64,6 @@ public class EndomondoDataParser extends FileDataParser<String>
      * EndoMondoWorkouts table.
      */
     private static final String validLinePrefix = "INSERT INTO `EndoMondoWorkouts` VALUES (";
-    
-    protected int batchSize = 2500;
 
     /**
      * Endomondo HTML constants

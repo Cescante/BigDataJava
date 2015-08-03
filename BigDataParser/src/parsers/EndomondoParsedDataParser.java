@@ -24,7 +24,6 @@ import bigDataProperties.*;
  */
 public class EndomondoParsedDataParser extends FileDataParser<String>
 {
-    protected int batchSize = 2500;
     private ConcurrentHashMap<String, CopyOnWriteArraySet<String>> userWorkoutMap;
     private ConcurrentHashMap<String, String> workoutIndexMap;
     private ConcurrentHashMap<String, AtomicInteger> dataKeysMap;
@@ -79,7 +78,7 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
                     // postProcessor.
                     if ( rawLineBatch.size() == batchSize )
                     {
-                        Collection<String> batchResult = this.ParseBatch( rawLineBatch,  String.format( "%05d", batchIndex ) );
+                        Collection<String> batchResult = this.ParseBatch( rawLineBatch, String.format( "%05d", batchIndex ) );
                         if( postProcessor.batchedOutput )
                         {
                         	postProcessor.Process( batchResult, null );
@@ -97,7 +96,7 @@ public class EndomondoParsedDataParser extends FileDataParser<String>
             // Finish off any danglers.
             if ( !rawLineBatch.isEmpty() )
             {
-                Collection<String> batchResult = this.ParseBatch( rawLineBatch,  String.format( "%05d", batchIndex ) );
+                Collection<String> batchResult = this.ParseBatch( rawLineBatch, String.format( "%05d", batchIndex ) );
                 if( postProcessor.batchedOutput )
                 {
                 	postProcessor.Process( batchResult, null );

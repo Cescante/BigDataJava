@@ -16,8 +16,6 @@ import java.util.*;
 public abstract class FileDataParser<E> extends DataParser<String, E>
 {
     protected String filePath;
-    protected int batchSize = 1000;
-    protected int threadCount = 10;
 
     public String getFileName()
     {
